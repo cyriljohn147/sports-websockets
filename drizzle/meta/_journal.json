@@ -8,6 +8,13 @@
       "when": 1780552322519,
       "tag": "0000_yummy_sleeper",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780554506865,
+      "tag": "0001_sweet_riptide",
+      "breakpoints": true
     }
   ]
 }

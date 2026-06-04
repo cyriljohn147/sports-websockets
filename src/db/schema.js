@@ -1,4 +1,5 @@
-import { pgEnum, pgTable, serial, text, timestamp, integer, jsonb, unique } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, serial, text, timestamp, integer, jsonb, unique, check } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const matchStatus = pgEnum('match_status', ['scheduled', 'live', 'finished']);
 
@@ -13,6 +14,11 @@ export const matches = pgTable('matches', {
   homeScore: integer('home_score').notNull().default(0),
   awayScore: integer('away_score').notNull().default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => {
+  return {
+    chkHomeScoreNonneg: check('chk_home_score_nonneg', sql`${table.homeScore} >= 0`),
+    chkAwayScoreNonneg: check('chk_away_score_nonneg', sql`${table.awayScore} >= 0`),
+  };
 });
 
 export const commentary = pgTable('commentary', {
@@ -31,5 +37,7 @@ export const commentary = pgTable('commentary', {
 }, (table) => {
   return {
     matchSequenceUnique: unique().on(table.matchId, table.sequence),
+    chkMinuteNonneg: check('chk_minute_nonneg', sql`${table.minute} >= 0`),
+    chkSequenceNonneg: check('chk_sequence_nonneg', sql`${table.sequence} >= 0`),
   };
 });
