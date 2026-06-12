@@ -22,7 +22,7 @@ matchesRouter.get('/', async (req, res) => {
         });
     }
 
-    const limit = Math.min(parsed.data.limit ?? 50, 100);
+    const limit = parsed.data.limit ?? 50;
 
     try {
         const data = await db.select().from(matches).orderBy(desc(matches.createdAt)).limit(limit);
@@ -55,12 +55,15 @@ matchesRouter.post('/', async (req, res) => {
     try {
         const { sport, homeTeam, awayTeam, startTime, endTime, homeScore, awayScore } = parsed.data;
         
+        const startDate = startTime ? new Date(startTime) : undefined;
+        const endDate = endTime ? new Date(endTime) : undefined;
+
         const [event] = await db.insert(matches).values({
             sport,
             homeTeam,
             awayTeam,
-            startTime: startTime ? new Date(startTime) : undefined,
-            endTime: endTime ? new Date(endTime) : undefined,
+            startTime: startDate,
+            endTime: endDate,
             homeScore: homeScore ?? 0,
             awayScore: awayScore ?? 0,
             status: startTime && endTime ? getMatchStatus(startTime, endTime) : 'scheduled',

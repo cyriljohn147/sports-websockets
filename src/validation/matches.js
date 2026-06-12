@@ -18,29 +18,11 @@ export const createMatchSchema = z.object({
   sport: z.string({ message: 'Sport is required' }).trim().min(1, 'Sport is required'),
   homeTeam: z.string({ message: 'Home team is required' }).trim().min(1, 'Home team is required'),
   awayTeam: z.string({ message: 'Away team is required' }).trim().min(1, 'Away team is required'),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
+  startTime: z.string().datetime({ message: 'startTime must be a valid ISO date string' }).optional(),
+  endTime: z.string().datetime({ message: 'endTime must be a valid ISO date string' }).optional(),
   homeScore: z.coerce.number().int().nonnegative().optional(),
   awayScore: z.coerce.number().int().nonnegative().optional(),
 }).superRefine((data, ctx) => {
-  if (data.startTime) {
-    if (isNaN(Date.parse(data.startTime))) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'startTime must be a valid ISO date string',
-        path: ['startTime'],
-      });
-    }
-  }
-  if (data.endTime) {
-    if (isNaN(Date.parse(data.endTime))) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'endTime must be a valid ISO date string',
-        path: ['endTime'],
-      });
-    }
-  }
   if (data.startTime && data.endTime) {
     const start = new Date(data.startTime);
     const end = new Date(data.endTime);

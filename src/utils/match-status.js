@@ -1,6 +1,10 @@
 import { MATCH_STATUS } from '../validation/matches.js';
 
 export function getMatchStatus(startTime, endTime, now = new Date()) {
+    if (!startTime || !endTime) {
+        return null;
+    }
+
     const start = new Date(startTime);
     const end = new Date(endTime);
 
@@ -26,7 +30,7 @@ export async function syncMatchStatus(match, updateStatus) {
     }
     if (match.status !== nextStatus) {
         await updateStatus(nextStatus);
-        match.status = nextStatus;
+        return { ...match, status: nextStatus };
     }
-    return match.status;
+    return match;
 }
